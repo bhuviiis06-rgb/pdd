@@ -135,7 +135,7 @@ window.handleCreateUser = async function(e) {
   };
 
   try {
-    const res = await fetch('http://192.168.31.10:3000/api/users', {
+    const res = await fetch('https://dentai-backend-5gi6.onrender.com/api/users', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newUser)
@@ -164,7 +164,7 @@ window.renderDoctorsTable = async function() {
   tbody.innerHTML = '<tr><td colspan="5">Loading from MongoDB...</td></tr>';
   
   try {
-    const res = await fetch('http://192.168.31.10:3000/api/users');
+    const res = await fetch('https://dentai-backend-5gi6.onrender.com/api/users');
     const users = await res.json();
     const doctors = users.filter(u => u.role === 'doctor');
     
@@ -197,7 +197,7 @@ window.renderResearchersTable = async function() {
   tbody.innerHTML = '<tr><td colspan="5">Loading from MongoDB...</td></tr>';
   
   try {
-    const res = await fetch('http://192.168.31.10:3000/api/users');
+    const res = await fetch('https://dentai-backend-5gi6.onrender.com/api/users');
     const users = await res.json();
     const researchers = users.filter(u => u.role === 'researcher');
     
@@ -229,7 +229,7 @@ window.renderResearchersTable = async function() {
 window.deleteUser = async function(id) {
   if (!confirm('Are you sure you want to permanently delete this user?')) return;
   try {
-    const res = await fetch(`http://192.168.31.10:3000/api/users/${id}`, { method: 'DELETE' });
+    const res = await fetch(`https://dentai-backend-5gi6.onrender.com/api/users/${id}`, { method: 'DELETE' });
     if (!res.ok) throw new Error('Failed to delete');
     if (!document.getElementById('adminTabDoctors').classList.contains('hidden')) renderDoctorsTable();
     if (!document.getElementById('adminTabResearchers').classList.contains('hidden')) renderResearchersTable();
@@ -238,7 +238,7 @@ window.deleteUser = async function(id) {
 
 window.suspendUser = async function(id) {
   try {
-    const resCheck = await fetch('http://192.168.31.10:3000/api/users');
+    const resCheck = await fetch('https://dentai-backend-5gi6.onrender.com/api/users');
     const users = await resCheck.json();
     const user = users.find(u => u.id === id);
     if (!user) return;
@@ -249,7 +249,7 @@ window.suspendUser = async function(id) {
       if (reason === null) return; // User cancelled
     }
 
-    const res = await fetch(`http://192.168.31.10:3000/api/users/${id}/suspend`, {
+    const res = await fetch(`https://dentai-backend-5gi6.onrender.com/api/users/${id}/suspend`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ reason })
@@ -294,7 +294,7 @@ window.reportUser = function(userId) {
 
 window.editUser = async function(userId) {
   try {
-    const res = await fetch('http://192.168.31.10:3000/api/users');
+    const res = await fetch('https://dentai-backend-5gi6.onrender.com/api/users');
     const users = await res.json();
     const user = users.find(u => u.id === userId);
     
@@ -379,7 +379,7 @@ window.saveUserEdit = async function(userId) {
   if (address !== undefined) payload.address = address;
 
   try {
-    const res = await fetch(`http://192.168.31.10:3000/api/users/${userId}`, {
+    const res = await fetch(`https://dentai-backend-5gi6.onrender.com/api/users/${userId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
