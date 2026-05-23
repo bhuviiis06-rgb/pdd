@@ -1176,6 +1176,11 @@ body {
   .vt-btn { flex: 1; text-align: center; }
   .heatmap-toggle { margin-left: 0 !important; margin-top: 8px; width: 100%; }
   .findings-grid { grid-template-columns: 1fr; }
+  .tooth-chart { overflow-x: auto; padding-bottom: 8px; }
+  .chart-row { gap: 2px; justify-content: flex-start; min-width: max-content; }
+  .chart-tooth { width: 18px; height: 28px; border-radius: 4px 4px 8px 8px; }
+  .ct-icon { font-size: 9px; }
+  .tooth-chart-card .card-body { padding: 12px 8px; }
 }
 
 /* ================================================
