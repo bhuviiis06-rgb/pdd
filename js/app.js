@@ -47,12 +47,24 @@ function initParticles() {
 window.handleLogin = async function() {
   const username = $('loginUsername').value.trim().toLowerCase();
   const password = $('loginPassword').value.trim();
+  const loginBtn = $('loginBtn');
+  
+  if (loginBtn) {
+    loginBtn.innerHTML = '<span class="spinner"></span> Signing In...';
+    loginBtn.disabled = true;
+  }
+  
   try {
     const user = await AuthManager.login(username, password);
     routeUser(user);
     showToast(`Welcome back, ${user.name}`, 'success');
   } catch (err) {
     showToast(err.message, 'error');
+  } finally {
+    if (loginBtn) {
+      loginBtn.innerHTML = 'Sign In';
+      loginBtn.disabled = false;
+    }
   }
 };
 

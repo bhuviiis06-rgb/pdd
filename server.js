@@ -6,6 +6,15 @@
 
 const express = require('express');
 const cors = require('cors');
+
+// Polyfill for MongoDB driver missing global crypto in older Node environments
+const crypto = require('crypto');
+if (typeof global.crypto === 'undefined') {
+  global.crypto = crypto;
+}
+if (typeof globalThis.crypto === 'undefined') {
+  globalThis.crypto = crypto;
+}
 const dotenv = require('dotenv');
 const fs = require('fs');
 const path = require('path');

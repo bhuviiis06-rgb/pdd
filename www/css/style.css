@@ -412,6 +412,18 @@ body {
 .r2 { width: 90px; height: 90px; border-top-color: rgba(167,139,250,0.4); border-left-color: rgba(167,139,250,0.15); animation-direction: reverse; animation-duration: 2s; }
 .r3 { width: 62px; height: 62px; border-top-color: rgba(52,211,153,0.35); border-bottom-color: rgba(52,211,153,0.1); animation-duration: 4s; }
 @keyframes orbSpin { to { transform: rotate(360deg); } }
+
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: orbSpin 1s linear infinite;
+  margin-right: 8px;
+  vertical-align: middle;
+}
 .orb-core {
   width: 44px; height: 44px;
   background: linear-gradient(135deg, rgba(96,165,250,0.12), rgba(167,139,250,0.12));
@@ -1159,6 +1171,11 @@ body {
   .form-row { grid-template-columns: 1fr; }
   .nav-actions .nav-btn:not(.nav-btn-primary) { display: none; }
   .results-header { flex-direction: column; }
+  .card-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .card-header .view-toggle { margin-left: 0; width: 100%; justify-content: flex-start; flex-wrap: wrap; }
+  .vt-btn { flex: 1; text-align: center; }
+  .heatmap-toggle { margin-left: 0 !important; margin-top: 8px; width: 100%; }
+  .findings-grid { grid-template-columns: 1fr; }
 }
 
 /* ================================================

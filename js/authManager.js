@@ -20,9 +20,9 @@ const AuthManager = (() => {
 
   async function login(username, password) {
     try {
-      const res = await fetch('https://swift-worms-own.loca.lt/api/auth/login', {
+      const res = await fetch('https://dentai-backend-5gi6.onrender.com/api/auth/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Bypass-Tunnel-Reminder': 'true' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
       });
       

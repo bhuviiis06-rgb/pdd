@@ -190,9 +190,9 @@ const ToothDetector = (() => {
       const base64 = getBase64FromImageData(imageData, width, height);
       console.log('[DentAI] Sending radiograph to local server for secure AI analysis...');
 
-      let apiUrl = 'https://swift-worms-own.loca.lt/api/analyze';
+      let apiUrl = 'https://dentai-backend-5gi6.onrender.com/api/analyze';
       if (window.location.protocol === 'file:') {
-        apiUrl = 'https://swift-worms-own.loca.lt/api/analyze';
+        apiUrl = 'https://dentai-backend-5gi6.onrender.com/api/analyze';
       }
 
       const response = await fetch(apiUrl, {
