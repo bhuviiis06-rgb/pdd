@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: dentai-backend
+    env: docker
+    plan: free
+    dockerCommand: "node server.js"
+    envVars:
+      - key: PORT
+        value: 3000
+      - key: AI_MODE
+        value: consensus
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: MONGODB_URI
+        sync: false

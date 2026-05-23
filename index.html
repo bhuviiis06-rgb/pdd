@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DentAI – Intelligent Clinical & Research Platform</title>
+  <meta name="description" content="AI-powered dental diagnostic platform for doctors, researchers, and administrators." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+
+  <style>
+  /* Table Action Buttons & Badges */
+  .action-btn {
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: white;
+    transition: opacity 0.2s;
+  }
+  .action-btn:hover { opacity: 0.8; }
+  .report-btn { background: #374151; }
+  .edit-btn { background: #374151; }
+  .suspend-btn { background: #f59e0b; }
+  .delete-btn { background: #ef4444; }
+
+  .status-badge.status-active { background: rgba(16, 185, 129, 0.2); color: #10b981; padding: 4px 8px; border-radius: 12px; font-size:11px; text-transform:lowercase; }
+  .status-badge.status-suspended { background: rgba(245, 158, 11, 0.2); color: #f59e0b; padding: 4px 8px; border-radius: 12px; font-size:11px; text-transform:lowercase; }
+  </style>
+  
+
+  <style>
+  /* User Profile Dropdown Styles */
+  .user-dropdown-container {
+    display: flex;
+    align-items: center;
+  }
+  .user-avatar-toggle {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 8px;
+    transition: background 0.2s;
+  }
+  .user-avatar-toggle:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+  .avatar-icon {
+    width: 36px;
+    height: 36px;
+    background: #064e3b; /* dark teal */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+  .user-info-short {
+    display: flex;
+    flex-direction: column;
+  }
+  .user-info-short strong {
+    font-size: 14px;
+    color: #f1f5f9;
+  }
+  .user-info-short small {
+    font-size: 11px;
+    color: #94a3b8;
+  }
+  .user-dropdown-menu {
+    position: absolute;
+    top: 54px;
+    right: 0;
+    width: 240px;
+    background: #1e293b; 
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    z-index: 100;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 16px;
+  }
+  .user-dropdown-menu.hidden {
+    display: none;
+  }
+  .dropdown-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px 16px 16px;
+  }
+  .avatar-lg {
+    width: 56px;
+    height: 56px;
+    background: #0f766e;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    margin-bottom: 12px;
+  }
+  .dropdown-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 4px;
+  }
+  .dropdown-email {
+    font-size: 12px;
+    color: #94a3b8;
+  }
+  .dropdown-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 0 16px 12px 16px;
+  }
+  .dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    margin: 0 16px 8px 16px;
+    color: #f8fafc;
+    text-decoration: none;
+    font-size: 13px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    transition: background 0.2s;
+  }
+  .dropdown-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+  .dropdown-logout-btn {
+    background: #fb7185; 
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin: 16px 16px 0 16px;
+    transition: opacity 0.2s;
+  }
+  .dropdown-logout-btn:hover {
+    opacity: 0.9;
+  }
+  </style>
+  
+</head>
+<body>
+  <!-- Background particles -->
+  <div class="bg-particles" id="bgParticles"></div>
+
+  <!-- Top Navigation -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-inner">
+      <div class="nav-brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16 3C10 3 6 7 6 12c0 2 0.5 4 2 6l2 8c0.5 2 2 3 4 3h4c2 0 3.5-1 4-3l2-8c1.5-2 2-4 2-6 0-5-4-9-10-9z" fill="url(#tooth-grad)"/>
+            <defs>
+              <linearGradient id="tooth-grad" x1="6" y1="3" x2="26" y2="29" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#60a5fa"/>
+                <stop offset="1" stop-color="#a78bfa"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">DMFT Analysis</span>
+          <span class="brand-tagline" id="navRoleTagline">Clinical Ecosystem</span>
+        </div>
+      </div>
+      <div class="nav-actions" id="navActionsAuth">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main App Container -->
+  <main class="app-container">
+
+    <!-- ====== LANDING SECTION ====== -->
+    <section class="section landing-section" id="sectionLanding">
+      <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 70vh; text-align: center; padding: 20px;">
+        <h1 style="font-size: 56px; color: #fff; margin-bottom: 24px; font-weight: 800; background: linear-gradient(135deg, #3b82f6 0%, #ec4899 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Welcome to DMFT Analysis</h1>
+        <p style="font-size: 18px; color: #94a3b8; max-width: 600px; margin-bottom: 40px; line-height: 1.6;">Intelligent clinical platform for automated dental radiograph analysis, epidemiological research, and accurate DMFT scoring.</p>
+        <button class="btn-primary" style="font-size: 18px; padding: 16px 48px; border-radius: 30px; box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);" onclick="showSection('sectionLogin')">Get Started</button>
+      </div>
+    </section>
+
+    <!-- ====== LOGIN SECTION ====== -->
+    <section class="section login-section hidden" id="sectionLogin">
+      <div class="login-card">
+        <div class="lc-header">
+          <h2>Welcome to DMFT Analysis</h2>
+          <p>Sign in to access your workspace</p>
+        </div>
+        <div class="lc-body">
+          <div class="form-group">
+            <label>Username</label>
+            <input type="text" id="loginUsername" placeholder="doctor, researcher, or admin" />
+          </div>
+          <div class="form-group" style="margin-top: 16px;">
+            <label>Password</label>
+            <input type="password" id="loginPassword" placeholder="Enter password" onkeydown="if(event.key === 'Enter') handleLogin()" />
+          </div>
+          <button class="btn-primary btn-full" onclick="handleLogin()" style="margin-top: 24px;">Sign In</button>
+          
+          <div class="login-hints">
+            <p><strong>Demo Accounts:</strong></p>
+            <ul>
+              <li><code>doctor</code> - Clinical Diagnostic Workflow</li>
+              <li><code>researcher</code> - Anonymized Data & Research</li>
+              <li><code>admin</code> - Platform Analytics & Logs</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== DOCTOR MODULE ====== -->
+    <div id="moduleDoctor" class="hidden">
+
+      <!-- ====== NEW MOBILE-FIRST DOCTOR DASHBOARD ====== -->
+      <style>
+      .dash-header { display: flex; align-items: center; gap: 16px; padding: 24px; background: #0b1a2a; border-radius: 0 0 40px 0; position: relative; overflow: hidden; }
+      .dash-header::before { content: ""; position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: rgba(14, 42, 71, 0.5); border-radius: 50%; }
+      .dash-avatar { width: 64px; height: 64px; background: #113247; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; z-index: 1; }
+      .dash-user-info { z-index: 1; }
+      .dash-user-info h2 { margin: 0; font-size: 24px; color: #fff; font-weight: 700; }
+      .dash-user-info p { margin: 4px 0 0; font-size: 14px; color: #94a3b8; }
+      .dash-welcome-card { margin: 24px; background: #112236; padding: 24px; border-radius: 20px; position: relative; z-index: 2; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+      .dash-welcome-card h3 { margin: 0; font-size: 20px; color: #fff; display:flex; align-items:center; gap:8px; }
+      .dash-welcome-card p { margin: 8px 0 0; font-size: 13px; color: #94a3b8; }
+      .dash-stats-row { display: flex; gap: 16px; margin: 0 24px 24px; }
+      .dash-stat-card { flex: 1; background: #112236; padding: 20px; border-radius: 20px; }
+      .dash-stat-card p { margin: 0 0 8px; font-size: 13px; color: #94a3b8; }
+      .dash-stat-card h3 { margin: 0; font-size: 32px; color: #fff; font-weight: 700; }
+      .dash-section-title { margin: 0 24px 16px; font-size: 18px; color: #fff; font-weight: 700; }
+      .dash-actions-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 0 24px 24px; }
+      .dash-action-btn { background: #112236; border: none; border-radius: 20px; padding: 20px 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; color: #fff; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+      .dash-action-btn:hover { background: #1a365d; }
+      .dash-action-icon { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+      .icon-blue { background: rgba(37, 99, 235, 0.2); color: #3b82f6; }
+      .icon-teal { background: rgba(20, 184, 166, 0.2); color: #14b8a6; }
+      .icon-pink { background: rgba(236, 72, 153, 0.2); color: #ec4899; }
+      .dash-recent-list { margin: 0 24px 24px; }
+      .dash-recent-item { background: #112236; padding: 16px 20px; border-radius: 16px; display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px;}
+      .dash-recent-item h4 { margin: 0; font-size: 14px; color: #fff; }
+      .dash-recent-item p { margin: 0; font-size: 12px; color: #94a3b8; }
+      </style>
+
+      <section class="section hidden" id="sectionDoctorDashboard" style="padding: 0; margin: -16px -24px 0 -24px; background: #040d17; min-height: 100vh;">
+        <div class="dash-header">
+          <div class="dash-avatar">👨‍⚕️</div>
+          <div class="dash-user-info">
+            <h2 id="dashUserName">Loading...</h2>
+            <p id="dashUserRole">Loading...</p>
+          </div>
+        </div>
+
+        <div class="dash-welcome-card">
+          <h3>Welcome Back 👋</h3>
+          <p>Monitor patient DMFT trends</p>
+        </div>
+
+        <div class="dash-stats-row">
+          <div class="dash-stat-card">
+            <p>Patients</p>
+            <h3 id="dashStatPatients">0</h3>
+          </div>
+          <div class="dash-stat-card">
+            <p>AI Reports</p>
+            <h3 id="dashStatReports">0</h3>
+          </div>
+        </div>
+
+        <h3 class="dash-section-title">Quick Actions</h3>
+        <div class="dash-actions-grid">
+          <button class="dash-action-btn" onclick="showSection('sectionAddPatient');">
+            <div class="dash-action-icon icon-blue">➕</div>
+            Add Patient
+          </button>
+          <button class="dash-action-btn" onclick="showSection('sectionPatientsList'); renderPatientsList()">
+            <div class="dash-action-icon icon-teal">👥</div>
+            View Patients
+          </button>
+          <button class="dash-action-btn" onclick="showSection('sectionUpload'); populatePatientDropdown();">
+            <div class="dash-action-icon icon-pink">🧠</div>
+            AI Analysis
+          </button>
+        </div>
+
+        <h3 class="dash-section-title">Recent Activity</h3>
+        <div class="dash-recent-list" id="dashRecentActivity">
+          <div class="dash-recent-item">
+            <h4>No recent activity</h4>
+            <p>Start a new analysis to see it here.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Add Patient Section -->
+      <section class="section hidden" id="sectionAddPatient">
+        <div class="section-header">
+          <button class="back-btn" onclick="showDoctorDashboard()">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/></svg>
+            Dashboard
+          </button>
+          <div>
+            <h2 class="section-title">Add New Patient</h2>
+            <p class="section-subtitle">Register new patient details</p>
+          </div>
+        </div>
+
+        <div class="upload-layout" style="display: block; max-width: 600px; margin: 0 auto;">
+          <div class="card patient-form-card">
+            <div class="card-header">
+              <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/></svg>
+              Patient Demographics
+            </div>
+            <div class="card-body">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="patientName">Full Name *</label>
+                  <input type="text" id="patientName" placeholder="e.g. John Smith" />
+                </div>
+                <div class="form-group">
+                  <label for="patientAge">Age *</label>
+                  <input type="number" id="patientAge" placeholder="e.g. 32" min="1" max="120" />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="patientGender">Gender</label>
+                  <select id="patientGender">
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="patientId">Patient ID</label>
+                  <input type="text" id="patientId" placeholder="Auto-generated" readonly />
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="clinicalNotes">Clinical Notes (optional)</label>
+                <textarea id="clinicalNotes" placeholder="Chief complaint, relevant history..." rows="2"></textarea>
+              </div>
+              <button class="btn-primary btn-full" onclick="savePatient()">Save Patient Data</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Upload / AI Analysis -->
+      <section class="section upload-section hidden" id="sectionUpload">
+        <div class="section-header">
+          <button class="back-btn" onclick="showDoctorDashboard()">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/></svg>
+            Dashboard
+          </button>
+          <div>
+            <h2 class="section-title">Clinical Diagnostic Workflow</h2>
+            <p class="section-subtitle">Select a patient and upload an OPG radiograph for AI analysis</p>
+          </div>
+        </div>
+
+        <div class="upload-layout">
+          <!-- Select Patient Card -->
+          <div class="card patient-form-card">
+            <div class="card-header">
+              <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/></svg>
+              Select Patient
+            </div>
+            <div class="card-body">
+              <div class="form-group">
+                <label for="aiPatientSelect" style="color: #8baed4; font-size: 14px;">Choose Existing Patient *</label>
+                <select id="aiPatientSelect" onchange="checkUploadStatus()" style="padding: 12px; font-size: 15px;">
+                  <option value="">Loading patients...</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Upload Area -->
+          <div class="card upload-card">
+            <div class="card-header">
+              <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/></svg>
+              OPG Radiograph Upload
+            </div>
+            <div class="card-body">
+              <div class="drop-zone" id="dropZone">
+                <input type="file" id="fileInput" accept="image/*,.dcm" hidden />
+                <div class="dz-inner" id="dzInner">
+                  <div class="dz-icon">
+                    <svg viewBox="0 0 64 64" fill="none"><rect x="8" y="16" width="48" height="36" rx="4" stroke="currentColor" stroke-width="2"/><path d="M8 44l14-12 10 10 8-8 14 10" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="22" cy="28" r="4" stroke="currentColor" stroke-width="2"/><path d="M32 4v12M28 8l4-4 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                  </div>
+                  <p class="dz-title">Drop OPG radiograph here</p>
+                  <p class="dz-subtitle">or <span class="dz-link" onclick="document.getElementById('fileInput').click()">browse to upload</span></p>
+                </div>
+                <div class="dz-preview hidden" id="dzPreview">
+                  <img id="previewImg" alt="OPG Preview" />
+                  <button class="dz-remove" id="removeImgBtn" onclick="removeImage()">✕</button>
+                </div>
+              </div>
+              </div>
+              <button class="btn-primary btn-full" id="analyzeBtn" onclick="startAnalysis()" disabled>Start AI Analysis</button>
+            </div>
+          </div>
+        </div>
+      </section>
+<!-- Processing Section -->
+      <section class="section processing-section hidden" id="sectionProcessing">
+        <div class="processing-center">
+          <div class="processing-orb">
+            <div class="orb-ring r1"></div><div class="orb-ring r2"></div><div class="orb-ring r3"></div>
+            <div class="orb-core">
+              <svg viewBox="0 0 40 40" fill="none"><path d="M20 5C11.7 5 5 11.7 5 20s6.7 15 15 15 15-6.7 15-15S28.3 5 20 5z" stroke="url(#grad1)" stroke-width="2"/><path d="M14 20l4 4 8-8" stroke="#60a5fa" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><defs><linearGradient id="grad1" x1="5" y1="5" x2="35" y2="35"><stop stop-color="#60a5fa"/><stop offset="1" stop-color="#a78bfa"/></linearGradient></defs></svg>
+            </div>
+          </div>
+          <h2 class="processing-title">Analyzing Radiograph</h2>
+          <p class="processing-subtitle" id="processingSubtitle">Initializing AI pipeline...</p>
+          <div class="pipeline-steps" id="pipelineSteps">
+            <!-- Steps injected via JS or hardcoded -->
+            <div class="ps-item" id="step1"><div class="ps-icon pending">1</div><div class="ps-text"><div class="ps-name">Image Preprocessing</div><div class="ps-desc">Enhancing quality</div></div></div>
+            <div class="ps-item" id="step2"><div class="ps-icon pending">2</div><div class="ps-text"><div class="ps-name">Tooth Segmentation</div><div class="ps-desc">Detecting structures</div></div></div>
+            <div class="ps-item" id="step3"><div class="ps-icon pending">3</div><div class="ps-text"><div class="ps-name">AI Classification</div><div class="ps-desc">Pathology detection</div></div></div>
+            <div class="ps-item" id="step4"><div class="ps-icon pending">4</div><div class="ps-text"><div class="ps-name">DMFT Calculation</div><div class="ps-desc">Computing indices</div></div></div>
+            <div class="ps-item" id="step5"><div class="ps-icon pending">5</div><div class="ps-text"><div class="ps-name">Report Generation</div><div class="ps-desc">Compiling clinical data</div></div></div>
+          </div>
+          <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar"></div></div>
+        </div>
+      </section>
+
+      <!-- Results Section -->
+      <section class="section results-section hidden" id="sectionResults">
+        <div class="results-header">
+          <div class="results-header-left">
+            <button class="back-btn" onclick="showDoctorDashboard()">Dashboard</button>
+            <div>
+              <h2 class="section-title">Clinical Diagnostic Report</h2>
+              <p class="section-subtitle" id="resultPatientInfo">Patient Analysis Complete</p>
+            </div>
+          </div>
+          <div class="results-header-actions">
+            <button class="btn-ghost" onclick="window.print()">Print Report</button>
+            <!-- Save is now automatic in pipeline, maybe just "Finish" -->
+            <button class="btn-primary" onclick="showDoctorDashboard()">Finish Workflow</button>
+          </div>
+        </div>
+
+        <!-- Simulation Warning Banner -->
+        <div id="simulationWarningBanner" class="hidden" style="background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.3); padding: 12px 16px; border-radius: var(--radius-sm); margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+          <div style="display: flex; align-items: center; gap: 12px; color: #f87171;">
+            <svg viewBox="0 0 20 20" fill="currentColor" style="width:20px; height:20px; flex-shrink: 0;"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+            <div style="font-size: 13.5px; line-height: 1.4;">
+              <strong>Simulation Mode Active:</strong> The AI Analysis server could not be reached due to a network or firewall issue. Showing simulated results.
+            </div>
+          </div>
+          <button class="btn-ghost" onclick="window.location.reload()" style="padding: 6px 12px; font-size: 12px; border-color: rgba(239, 68, 68, 0.4); color: #f87171; background: transparent; flex-shrink: 0; min-height: auto;">Retry Connection</button>
+        </div>
+
+        <div class="results-layout">
+          <!-- Left: Images & Chart (Reusing existing layout classes) -->
+          <div class="results-left">
+            <div class="card image-result-card">
+              <div class="card-header">
+                Annotated OPG Radiograph
+                <div class="view-toggle" style="display: flex; align-items: center; gap: 8px;">
+                  <button class="vt-btn active" id="btnOriginal" onclick="toggleView('original')">Original</button>
+                  <button class="vt-btn" id="btnAnnotated" onclick="toggleView('annotated')">Annotated</button>
+                  <button class="vt-btn" id="btnEnhanced" onclick="toggleView('enhanced')">Enhanced</button>
+                  <label class="heatmap-toggle" style="display: flex; align-items: center; gap: 6px; margin-left: 12px; font-size: 11px; color: var(--text-secondary); cursor: pointer; user-select: none;">
+                    <input type="checkbox" id="chkHeatmap" style="display: none;" onchange="toggleHeatmap(this.checked)" />
+                    <span class="heatmap-switch" style="width: 28px; height: 16px; background: #101b30; border: 1px solid var(--border); border-radius: 100px; position: relative; display: inline-block; transition: var(--transition);"></span>
+                    Heatmap
+                  </label>
+                </div>
+              </div>
+              <div class="card-body image-body">
+                <div class="canvas-wrap">
+                  <canvas id="originalCanvas" class="result-canvas"></canvas>
+                  <canvas id="annotatedCanvas" class="result-canvas hidden"></canvas>
+                  <canvas id="enhancedCanvas" class="result-canvas hidden"></canvas>
+                </div>
+                <!-- Legend -->
+              </div>
+            </div>
+            
+            <div class="card tooth-chart-card">
+              <div class="card-header">Dental Chart (FDI System)</div>
+              <div class="card-body"><div class="tooth-chart" id="toothChart"></div></div>
+            </div>
+          </div>
+
+          <!-- Right: Scores -->
+          <div class="results-right">
+            <div class="card dmft-score-card">
+              <div class="dmft-main">
+                <div class="dmft-label">DMFT Score</div>
+                <div class="dmft-value" id="dmftValue">–</div>
+                <div class="dmft-severity" id="dmftSeverity">–</div>
+                <div style="margin-top: 12px;"><span id="cariesRiskBadge" class="caries-risk-badge risk-low">🦷 Caries Risk: Low</span></div>
+                <div id="boneLossAlert" class="bone-loss-alert hidden">⚠️ Bone loss detected</div>
+              </div>
+              <div class="dmft-breakdown">
+                <div class="dmft-item decayed"><div class="di-count" id="countDecayed">0</div><div class="di-label">Decayed</div></div>
+                <div class="dmft-item missing"><div class="di-count" id="countMissing">0</div><div class="di-label">Missing</div></div>
+                <div class="dmft-item filled"><div class="di-count" id="countFilled">0</div><div class="di-label">Filled</div></div>
+                <div class="dmft-item healthy"><div class="di-count" id="countHealthy">0</div><div class="di-label">Healthy</div></div>
+              </div>
+                 <div class="card confidence-card" style="margin-top: 16px;">
+              <div class="card-header">AI Confidence & Consensus</div>
+              <div class="card-body">
+                <div class="agreement-stats" style="margin-bottom: 16px; justify-content: space-around; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
+                  <div class="agr-stat"><div class="agr-stat-val high" id="agreementHigh">0</div><div class="agr-stat-label">High Agree</div></div>
+                  <div class="agr-stat"><div class="agr-stat-val medium" id="agreementMedium">0</div><div class="agr-stat-label">Medium Agree</div></div>
+                  <div class="agr-stat"><div class="agr-stat-val low" id="agreementLow">0</div><div class="agr-stat-label">Disputed</div></div>
+                </div>
+                <div class="conf-row"><span class="conf-label">Overall Confidence</span><div class="conf-bar-wrap"><div class="conf-bar" id="confOverall"></div></div><span class="conf-val" id="confOverallVal">–</span></div>
+                <div class="conf-row"><span class="conf-label">Image Quality</span><div class="conf-bar-wrap"><div class="conf-bar" id="confQuality"></div></div><span class="conf-val" id="imageQualityVal">Good</span></div>
+                <div style="margin: 12px 0 8px 0; border-top: 1px solid var(--border); padding-top: 8px;"></div>
+                <div class="conf-row"><span class="conf-label">Decay Detection</span><div class="conf-bar-wrap"><div class="conf-bar" id="confDecay" style="background: linear-gradient(90deg, #f87171, #fb923c);"></div></div><span class="conf-val" id="confDecayVal">–</span></div>
+                <div class="conf-row"><span class="conf-label">Missing Tooth</span><div class="conf-bar-wrap"><div class="conf-bar" id="confMissing" style="background: linear-gradient(90deg, #fb923c, #fbbf24);"></div></div><span class="conf-val" id="confMissingVal">–</span></div>
+                <div class="conf-row"><span class="conf-label">Filling Detection</span><div class="conf-bar-wrap"><div class="conf-bar" id="confFilled" style="background: linear-gradient(90deg, #60a5fa, #3b82f6);"></div></div><span class="conf-val" id="confFilledVal">–</span></div>
+              </div>
+            </div>
+
+            <div class="card" style="margin-top: 16px;">
+              <div class="card-header">Clinical Findings</div>
+              <div class="card-body" style="padding: 16px;">
+                <div style="margin-bottom: 12px;">
+                  <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px;">Urgent Attention (>80% Conf)</div>
+                  <div id="urgentTeethList"><span class="no-findings">None</span></div>
+                </div>
+                <div style="margin-bottom: 12px;">
+                  <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px;">Monitor (60-80% Conf / Med Agree)</div>
+                  <div id="monitorTeethList"><span class="no-findings">None</span></div>
+                </div>
+                <div>
+                  <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px;">Abnormalities</div>
+                  <div id="abnormalitiesText" style="font-size: 13px; color: var(--text-secondary);">None detected</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card" style="margin-top: 16px;">
+              <div class="card-header">AI Radiologist Notes</div>
+              <div class="card-body" style="padding: 16px;">
+                <p id="radiologistNotes" style="font-size: 13px; color: var(--text-secondary); line-height: 1.5; margin: 0; font-style: italic;">Processing consensus notes...</p>
+              </div>
+            </div>
+
+            <div class="card tooth-table-card">
+              <div class="card-header">Tooth-by-Tooth Analysis</div>
+              <div class="card-body no-pad">
+                <div class="table-wrap">
+                  <table class="tooth-table">
+                    <thead>
+                      <tr>
+                        <th>Tooth</th>
+                        <th>Type</th>
+                        <th>Finding</th>
+                        <th>Confidence</th>
+                        <th>Consensus Status</th>
+                      </tr>
+                    </thead>
+                    <tbody id="toothTableBody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <div class="card recommendation-card">
+              <div class="card-header">Clinical Recommendations</div>
+              <div class="card-body"><div class="recommendation-content" id="recommendationContent"></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Doctor Dashboard (List of Patients & Scans) -->
+      <section class="section patients-section hidden" id="sectionPatientsList">
+        <div class="section-header">
+          <button class="back-btn" onclick="showDoctorDashboard()">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/></svg>
+            Dashboard
+          </button>
+          <div>
+            <h2 class="section-title">Clinical Dashboard</h2>
+            <p class="section-subtitle">Manage your patients and diagnostic reports</p>
+          </div>
+          <button class="btn-primary" onclick="showSection('sectionUpload'); populatePatientDropdown();">New Analysis</button>
+        </div>
+        <div class="patients-search">
+          <input type="text" id="patientSearch" placeholder="Search patients by name or ID..." oninput="filterPatients(this.value)" />
+        </div>
+        <div id="patientsList" class="patients-grid"></div>
+        <div id="patientsEmpty" class="empty-state hidden">
+          <p>No Patient Records found. Start by running a new analysis.</p>
+        </div>
+      </section>
+    </div>
+
+
+    <!-- ====== RESEARCHER MODULE ====== -->
+    <div id="moduleResearcher" class="hidden">
+      <section class="section" id="sectionResearcherDashboard">
+        <div class="section-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+          <div>
+            <h2 class="section-title">Research Workspace</h2>
+            <p class="section-subtitle">Access anonymized case studies for epidemiological and AI validation research</p>
+          </div>
+        </div>
+        
+        <!-- Researcher Tabs -->
+        <div class="res-tabs-container" style="margin-bottom: 20px; border-bottom: 1px solid var(--border); display: flex; gap: 16px;">
+          <button class="res-tab-btn active" onclick="switchResTab('cases')">Case Studies</button>
+          <button class="res-tab-btn" onclick="switchResTab('literature')">Literature & References</button>
+          <button class="res-tab-btn" onclick="switchResTab('notes')">Saved Notes</button>
+        </div>
+
+        <!-- Tab 1: Case Studies -->
+        <div id="resTabCaseStudies" class="res-tab-content active">
+        <div class="research-layout">
+          <!-- List of Anonymized Scans -->
+          <div class="research-list card">
+            <div class="card-header">Anonymized Case Studies</div>
+            <div class="card-body no-pad" id="researchScansList">
+              <!-- JS Injected -->
+            </div>
+          </div>
+
+          <!-- Research Note Editor & Viewer -->
+          <div class="research-workspace">
+            <div class="card hidden" id="researchScanDetailCard">
+              <div class="card-header" style="justify-content: space-between;">
+                <span id="rsDetailTitle">Scan Details</span>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                  <span class="pc-badge dmft" id="rsDetailDmft">DMFT -</span>
+                  <button class="btn-ghost" onclick="closeResearchScan()" style="padding: 4px; display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%;" title="Close Workspace">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                  </button>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="rs-stats-row">
+                  <div class="rs-stat"><strong>Age:</strong> <span id="rsAge"></span></div>
+                  <div class="rs-stat"><strong>Gender:</strong> <span id="rsGender"></span></div>
+                  <div class="rs-stat"><strong>Severity:</strong> <span id="rsSeverity"></span></div>
+                  <div class="rs-stat"><strong>Date:</strong> <span id="rsDate"></span></div>
+                </div>
+                
+                <!-- Simplified Image Viewer for Researcher -->
+                <div class="canvas-wrap" style="height: 250px; margin: 16px 0;">
+                  <img id="rsImagePreview" style="width:100%; height:100%; object-fit:contain;" />
+                </div>
+                
+                <h4>Tooth Classifications</h4>
+                <div style="font-size:12px; color:var(--text-secondary); margin-bottom: 20px;" id="rsToothSummary"></div>
+
+                <div class="research-notes-section">
+                  <h4 style="margin-bottom:10px">Your Research Notes</h4>
+                  <div id="rsNotesList" style="margin-bottom: 16px;"></div>
+                  
+                  <div class="form-group">
+                    <input type="text" id="rnTitle" placeholder="Observation Title" />
+                  </div>
+                  <div class="form-group">
+                    <textarea id="rnContent" placeholder="Enter academic/clinical observations, epidemiological notes, or AI model validation notes here..."></textarea>
+                  </div>
+                  <button class="btn-primary" onclick="saveResearchNote()">Save Note</button>
+                </div>
+              </div>
+            </div>
+            
+            <div class="empty-state" id="rsEmptyState">
+              <h3>No Case Selected</h3>
+              <p>Select an anonymized scan from the left panel to begin analysis.</p>
+            </div>
+          </div>
+        </div>
+        </div> <!-- End Tab 1 -->
+
+        <!-- Tab 2: Literature & References -->
+        <div id="resTabLiterature" class="res-tab-content hidden">
+          <div class="research-layout">
+            <!-- Left panel: Library -->
+            <div class="research-list card">
+              <div class="card-header">Academic Library</div>
+              <div class="card-body no-pad" id="litLibraryList" style="overflow-y: auto; max-height: calc(100vh - 250px);">
+                <!-- JS Injected Mock Papers -->
+              </div>
+            </div>
+            
+            <!-- Right panel: Reader & Tools -->
+            <div class="research-workspace">
+              <div class="card hidden" id="litDetailCard">
+                <div class="card-header" style="justify-content: space-between;">
+                  <span id="litTitle">Paper Title</span>
+                  <div style="display:flex; gap:8px;">
+                    <button class="btn-ghost" style="padding:4px 8px; font-size:12px;" onclick="copyCitation()">Cite</button>
+                    <button class="btn-ghost" style="padding:4px 8px; font-size:12px;" onclick="alert('PDF Download initiated.')">Download PDF</button>
+                  </div>
+                </div>
+                <div class="card-body" style="display: flex; gap: 20px; height: 600px;">
+                  <!-- PDF Viewer Area -->
+                  <div style="flex: 2; border: 1px solid var(--border); border-radius: var(--radius-md); background: #fff; display: flex; flex-direction: column; position: relative; overflow: hidden;">
+                     <div style="background: #f3f4f6; border-bottom: 1px solid #e5e7eb; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; color: #374151; font-size: 12px;">
+                        <span>PDF Viewer</span>
+                        <span>Page 1 / 14</span>
+                     </div>
+                     <div style="padding: 40px; color:#000; overflow-y: auto; flex: 1;">
+                       <h2 id="pdfViewerTitle" style="margin-bottom:20px; font-family: serif; line-height: 1.3;">PDF Viewer Placeholder</h2>
+                       <div style="color:#4b5563; font-size:14px; font-family: serif; line-height: 1.6; text-align: justify;">
+                         <strong>Abstract:</strong> <span id="pdfViewerAbstract">Abstract text goes here...</span>
+                         <br><br>
+                         <strong>1. Introduction</strong><br>
+                         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                         <br><br>
+                         <strong>2. Methodology</strong><br>
+                         At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.
+                       </div>
+                     </div>
+                  </div>
+                  
+                  <!-- Sidebar Tools -->
+                  <div style="flex: 1; display: flex; flex-direction: column; gap: 16px;">
+                    <div class="research-notes-section">
+                       <h4 style="margin-bottom:10px; font-size: 14px;">Citation Manager</h4>
+                       <div style="background:var(--surface); padding:12px; border-radius:var(--radius-sm); font-size:12px; margin-bottom:10px; border: 1px solid var(--border);">
+                         <div style="margin-bottom: 4px; color: var(--text-secondary);">APA 7th Edition:</div>
+                         <div id="litCitationApa" style="color: var(--text-primary); user-select: all;">Author. (Year). Title. Journal.</div>
+                       </div>
+                    </div>
+                    
+                    <div class="research-notes-section">
+                       <h4 style="margin-bottom:10px; font-size: 14px;">Paper Notes</h4>
+                       <div class="form-group">
+                         <textarea id="litNoteContent" placeholder="Jot down insights, methodology critiques, or key findings..." style="min-height:120px; font-size: 13px;"></textarea>
+                       </div>
+                       <button class="btn-primary" style="width:100%" onclick="saveLitNote()">Save Paper Note</button>
+                    </div>
+
+                    <div class="research-notes-section" style="flex: 1; overflow-y:auto; padding-right: 4px;">
+                       <h4 style="margin-bottom:10px; font-size: 14px;">Related Studies</h4>
+                       <div id="litRelatedStudies" style="display:flex; flex-direction:column; gap:8px;">
+                         <!-- JS injected -->
+                       </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="empty-state" id="litEmptyState">
+                <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 16px; color: var(--text-muted);"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+                <h3>No Literature Selected</h3>
+                <p>Select a research paper, systematic review, or book from the academic library.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 3: Saved Notes -->
+        <div id="resTabSavedNotes" class="res-tab-content hidden">
+          <div class="card" style="min-height: 500px;">
+            <div class="card-header" style="justify-content: space-between;">
+              <span>Aggregated Saved Notes</span>
+              <button class="btn-ghost" onclick="exportNotes()">Export All (CSV)</button>
+            </div>
+            <div class="card-body" style="background: var(--bg-color);">
+              <div id="allSavedNotesGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px;">
+                 <!-- JS injected notes -->
+              </div>
+              <div class="empty-state hidden" id="allNotesEmptyState">
+                <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 16px; color: var(--text-muted);"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                <h3>No Notes Saved</h3>
+                <p>Your notes from Case Studies and Literature will appear here.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+    </div>
+
+
+    <!-- ====== ADMIN MODULE ====== -->
+    <div id="moduleAdmin" class="hidden">
+      <section class="section" id="sectionAdminDashboard">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Platform Administration</h2>
+            <p class="section-subtitle">Centralized operational oversight and platform analytics</p>
+          </div>
+        </div>
+        
+        <!-- Admin Tabs -->
+        <div class="res-tabs-container" style="margin-bottom: 24px; border-bottom: 1px solid var(--border); display: flex; gap: 16px;">
+          <button class="res-tab-btn active" onclick="switchAdminTab('create')">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px; vertical-align:text-bottom;"><path d="M12 5v14M5 12h14"/></svg>
+            Create New User
+          </button>
+          <button class="res-tab-btn" onclick="switchAdminTab('doctors')">View Doctors</button>
+          <button class="res-tab-btn" onclick="switchAdminTab('researchers')">View Researchers</button>
+          <button class="res-tab-btn" onclick="switchAdminTab('dashboard')">Platform Analytics</button>
+        </div>
+
+        <!-- Tab: Platform Analytics (Old Dashboard) -->
+        <div id="adminTabDashboard" class="admin-tab-content hidden">
+          <!-- Stats Grid -->
+          <div class="admin-stats-grid">
+            <div class="stat-card">
+              <div class="sc-title">Total Users</div>
+              <div class="sc-val" id="adTotalUsers">-</div>
+            </div>
+            <div class="stat-card">
+              <div class="sc-title">Total Patients</div>
+              <div class="sc-val" id="adTotalPatients">-</div>
+            </div>
+            <div class="stat-card">
+              <div class="sc-title">Analyses Performed</div>
+              <div class="sc-val" id="adTotalScans">-</div>
+            </div>
+            <div class="stat-card">
+              <div class="sc-title">Global Avg DMFT</div>
+              <div class="sc-val" style="color:var(--rose)" id="adAvgDmft">-</div>
+            </div>
+            <div class="stat-card">
+              <div class="sc-title">Research Notes</div>
+              <div class="sc-val" style="color:var(--teal)" id="adTotalNotes">-</div>
+            </div>
+          </div>
+
+          <div class="admin-layout">
+            <!-- Users Table -->
+            <div class="card">
+              <div class="card-header">System Users</div>
+              <div class="card-body no-pad table-wrap" style="max-height: 400px;">
+                <table class="tooth-table">
+                  <thead><tr><th>Username</th><th>Name</th><th>Role</th><th>Specialty</th></tr></thead>
+                  <tbody id="adUsersTable"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Activity Logs -->
+            <div class="card">
+              <div class="card-header">System Activity Logs</div>
+              <div class="card-body no-pad table-wrap" style="max-height: 400px;">
+                <table class="tooth-table">
+                  <thead><tr><th>Time</th><th>Action</th><th>User ID</th></tr></thead>
+                  <tbody id="adLogsTable"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab: Create User -->
+        <div id="adminTabCreate" class="admin-tab-content active">
+          <div class="card" style="max-width: 600px;">
+            <div class="card-header" style="flex-direction: column; align-items: flex-start; padding-bottom: 8px;">
+               <div style="display:flex; align-items:center; gap:8px;">
+                 <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#8b5cf6" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                 <span style="font-size:16px;">Create New User</span>
+               </div>
+               <div style="font-size:12px; color:var(--text-muted); font-weight:normal; margin-top:4px;">Only Admin can create accounts. No public registration.</div>
+            </div>
+            <div class="card-body">
+               <form id="adminCreateUserForm" onsubmit="handleCreateUser(event)">
+                 
+                 <div style="display:flex; gap:16px; margin-bottom:16px;">
+                   <div class="form-group" style="flex:1;">
+                     <label style="display:block; margin-bottom:6px; font-size:12px; color:var(--text-secondary);">First Name</label>
+                     <input type="text" id="cuFirstName" required placeholder="First name" style="width:100%; padding:10px; background:var(--bg-secondary); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text-primary);" />
+                   </div>
+                   <div class="form-group" style="flex:1;">
+                     <label style="display:block; margin-bottom:6px; font-size:12px; color:var(--text-secondary);">Last Name</label>
+                     <input type="text" id="cuLastName" required placeholder="Last name" style="width:100%; padding:10px; background:var(--bg-secondary); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text-primary);" />
+                   </div>
+                 </div>
+
+                 <div style="display:flex; gap:16px; margin-bottom:16px;">
+                   <div class="form-group" style="flex:1;">
+                     <label style="display:block; margin-bottom:6px; font-size:12px; color:var(--text-secondary);">Date of Birth</label>
+                     <input type="date" id="cuDOB" required style="width:100%; padding:10px; background:var(--bg-secondary); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text-primary);" />
+                   </div>
+                   <div class="form-group" style="flex:1;">
+                     <label style="display:block; margin-bottom:6px; font-size:12px; color:var(--text-secondary);">Gender</label>
+                     <select id="cuGender" required style="width:100%; padding:10px; background:var(--bg-secondary); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text-primary);">
+                       <option value="" disabled selected>Select gender</option>
+                       <option value="Male">Male</option>
+                       <option value="Female">Female</option>
+                       <option value="Other">Other</option>
+                     </select>
+                   </div>
+                 </div>
+
+                 <div style="display:flex; gap:16px; margin-bottom:16px;">
+                   <div class="form-group" style="flex:1;">
+                     <label style="display:block; margin-bottom:6px; font-size:12px; color:var(--text-secondary);">Mobile Number</label>
+                     <input type="tel" id="cuMobile" required placeholder="Mobile number" style="width:100%; padding:10px; background:var(--bg-secondary); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text-primary);" />
+                   </div>
+                   <div class="form-group" style="flex:1;">
+                     <label style="display:block; margin-bottom:6px; font-size:12px; color:var(--text-secondary);">Email ID</label>
+                     <input type="email" id="cuEmail" required placeholder="Email address" style="width:100%; padding:10px; background:var(--bg-secondary); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text-primary);" />
+                   </div>
+                 </div>
+
+                 <div class="form-group" style="margin-bottom: 16px;">
+                   <label style="display:block; margin-bottom:6px; font-size:12px; color:var(--text-secondary);">Address</label>
+                   <textarea id="cuAddress" required placeholder="Full residential address" rows="2" style="width:100%; padding:10px; background:var(--bg-secondary); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text-primary); resize:vertical;"></textarea>
+                 </div>
+
+                 <div class="form-group" style="margin-bottom: 16px;">
+                   <label style="display:block; margin-bottom:6px; font-size:12px; color:var(--text-secondary);">Account Role</label>
+                   <select id="cuRole" style="width:100%; padding:10px; background:var(--bg-secondary); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text-primary);">
+                     <option value="doctor">Doctor</option>
+                     <option value="researcher">Researcher</option>
+                   </select>
+                 </div>
+
+                 <div style="display:flex; gap:16px; margin-bottom:24px;">
+                   <div class="form-group" style="flex:1;">
+                     <label style="display:block; margin-bottom:6px; font-size:12px; color:var(--text-secondary);">Username</label>
+                     <input type="text" id="cuUsername" required placeholder="Enter username" style="width:100%; padding:10px; background:var(--bg-secondary); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text-primary);" />
+                   </div>
+                   <div class="form-group" style="flex:1;">
+                     <label style="display:block; margin-bottom:6px; font-size:12px; color:var(--text-secondary);">Password</label>
+                     <input type="text" id="cuPassword" required placeholder="Set password" style="width:100%; padding:10px; background:var(--bg-secondary); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text-primary);" />
+                   </div>
+                 </div>
+
+                 <button type="submit" class="btn-primary" style="background: #6366f1; gap: 8px; width: 100%;">
+                   <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                   Create User Account
+                 </button>
+               </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab: View Doctors -->
+        <div id="adminTabDoctors" class="admin-tab-content hidden">
+          <div class="card">
+            <div class="card-header">Registered Doctors</div>
+            <div class="card-body no-pad table-wrap" style="max-height: 500px;">
+              <table class="tooth-table">
+                <thead><tr><th>Name</th><th>Username</th><th>Password</th><th>Specialty</th><th>Status</th><th>Actions</th></tr></thead>
+                <tbody id="adDoctorsTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab: View Researchers -->
+        <div id="adminTabResearchers" class="admin-tab-content hidden">
+          <div class="card">
+            <div class="card-header">Registered Researchers</div>
+            <div class="card-body no-pad table-wrap" style="max-height: 500px;">
+              <table class="tooth-table">
+                <thead><tr><th>Name</th><th>Username</th><th>Password</th><th>Department</th><th>Status</th><th>Actions</th></tr></thead>
+                <tbody id="adResearchersTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  <!-- ====== OVERRIDE MODAL ====== -->
+  <div class="modal hidden" id="modalOverride">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="overrideModalTitle" style="margin:0; font-size:18px; color:var(--text-primary);">Override Tooth Findings</h3>
+        <button class="btn-icon" onclick="closeOverrideModal()">✕</button>
+      </div>
+      <div class="modal-body" style="padding-top:16px;">
+        <input type="hidden" id="overrideFdi" />
+        
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label style="display:block; margin-bottom:6px; font-size:12px; color:var(--text-secondary);">FDI Number</label>
+          <input type="text" id="overrideFdiDisplay" readonly style="width:100%; padding:10px; background:var(--bg-secondary); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text-primary); font-weight:600;" />
+        </div>
+
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label for="overrideStatus" style="display:block; margin-bottom:6px; font-size:12px; color:var(--text-secondary);">Status</label>
+          <select id="overrideStatus" style="width:100%; padding:10px; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text-primary); border-color:var(--border);" onchange="onOverrideStatusChange(this.value)">
+            <option value="Healthy">Healthy</option>
+            <option value="Decayed">Decayed</option>
+            <option value="Filled">Filled</option>
+            <option value="Missing">Missing</option>
+            <option value="Impacted">Impacted</option>
+            <option value="Needs_Review">Needs Review</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="overrideSeverityGroup" style="margin-bottom: 16px; display:none;">
+          <label for="overrideSeverity" style="display:block; margin-bottom:6px; font-size:12px; color:var(--text-secondary);">Severity (Caries)</label>
+          <select id="overrideSeverity" style="width:100%; padding:10px; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text-primary); border-color:var(--border);">
+            <option value="mild">Mild (D1/D2)</option>
+            <option value="moderate">Moderate (D3/D4)</option>
+            <option value="severe">Severe (D5/D6)</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 20px;">
+          <label for="overrideNotes" style="display:block; margin-bottom:6px; font-size:12px; color:var(--text-secondary);">Clinical Notes</label>
+          <textarea id="overrideNotes" placeholder="Enter reason or comments for manual override..." rows="3" style="width:100%; padding:10px; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text-primary); border-color:var(--border); resize:vertical; font-family:inherit;"></textarea>
+        </div>
+
+        <div class="modal-footer" style="display:flex; justify-content:flex-end; gap:12px;">
+          <button class="btn-ghost" onclick="closeOverrideModal()">Cancel</button>
+          <button class="btn-primary" onclick="saveOverride()">Apply Override</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== OFFLINE/WARNING MODAL ====== -->
+  <div class="modal hidden" id="modalOfflineWarning">
+    <div class="modal-content" style="max-width: 480px; border-color: rgba(239, 68, 68, 0.3);">
+      <div class="modal-header" style="border-bottom: 1px solid rgba(239, 68, 68, 0.15);">
+        <h3 style="margin:0; font-size:18px; color:#f87171; display:flex; align-items:center; gap:8px;">
+          <svg viewBox="0 0 20 20" fill="currentColor" style="width:20px; height:20px; flex-shrink:0;"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+          Offline Simulation Mode
+        </h3>
+        <button class="btn-icon" onclick="closeOfflineWarningModal()">✕</button>
+      </div>
+      <div class="modal-body" style="padding-top:16px;">
+        <p style="margin-top: 0; line-height: 1.5; font-size: 15px; color: #f1f5f9;">
+          The AI Analysis server could not be reached. The analysis has run in <strong>Simulation Mode</strong>.
+        </p>
+        
+        <div style="background: rgba(239, 68, 68, 0.1); border-left: 3px solid #ef4444; padding: 12px 16px; border-radius: 4px; margin: 20px 0;">
+          <h4 style="margin: 0 0 8px 0; color: #fca5a5; font-size: 14px;">Why did this happen?</h4>
+          <ul style="margin: 0; padding-left: 20px; font-size: 13px; color: #cbd5e1; line-height: 1.6;">
+            <li>The cloud API is currently unavailable or experiencing high latency.</li>
+            <li>Your device's network connection dropped during analysis.</li>
+          </ul>
+        </div>
+        
+        <p style="font-size: 13.5px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 20px;">
+          ⚠️ <strong>Note:</strong> Simulation mode uses client-side intensity heuristics, which usually default to a healthy mouth (DMFT: 0) and will not show your YOLO model's actual pathological findings.
+        </p>
+        
+        <div class="modal-footer" style="display:flex; justify-content:flex-end; gap:12px;">
+          <button class="btn-ghost" onclick="closeOfflineWarningModal()">Continue anyway</button>
+          <button class="btn-primary" onclick="window.location.reload()" style="background: var(--blue); border-color: var(--blue); font-weight:600;">Retry Connection</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- Scripts -->
+  <script src="js/db.js"></script>
+  <script src="js/authManager.js"></script>
+  
+  <!-- Core Logic -->
+  <script src="js/imageProcessor.js"></script>
+  <script src="js/toothDetector.js"></script>
+  <script src="js/dmftCalculator.js"></script>
+  <script src="js/annotator.js"></script>
+  
+  <!-- Module Logic -->
+  <script src="js/adminModule.js"></script>
+  <script src="js/researcherModule.js"></script>
+  <script src="js/app.js"></script>
+
+
+  <!-- ====== MY PROFILE MODAL ====== -->
+  <div class="modal hidden" id="modalMyProfile">
+    <div class="modal-content" style="max-width: 500px; padding: 24px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 24px; border-bottom: 1px solid var(--border); padding-bottom: 16px;">
+        <h3 style="margin:0; font-size:20px; color:var(--text-primary); display:flex; align-items:center; gap:8px;">
+          <span>👤</span> My Profile
+        </h3>
+        <button class="btn-icon" onclick="closeMyProfileModal()">✕</button>
+      </div>
+      
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <div style="display:flex; align-items:center; gap:16px; margin-bottom: 8px;">
+           <div style="width: 72px; height: 72px; background: #0f766e; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px;">👨‍⚕️</div>
+           <div>
+             <div id="mpName" style="font-size: 20px; font-weight: 600; color: #fff;"></div>
+             <div id="mpRole" style="font-size: 13px; color: var(--blue);"></div>
+           </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div style="background:var(--bg-secondary); padding:12px; border-radius:8px;">
+            <div style="font-size:11px; color:var(--text-muted); margin-bottom:4px;">Username</div>
+            <div id="mpUsername" style="font-size:14px; color:var(--text-primary);"></div>
+          </div>
+          <div style="background:var(--bg-secondary); padding:12px; border-radius:8px;">
+            <div style="font-size:11px; color:var(--text-muted); margin-bottom:4px;">Email ID</div>
+            <div id="mpEmail" style="font-size:14px; color:var(--text-primary);"></div>
+          </div>
+          <div style="background:var(--bg-secondary); padding:12px; border-radius:8px;">
+            <div style="font-size:11px; color:var(--text-muted); margin-bottom:4px;">Date of Birth</div>
+            <div id="mpDOB" style="font-size:14px; color:var(--text-primary);"></div>
+          </div>
+          <div style="background:var(--bg-secondary); padding:12px; border-radius:8px;">
+            <div style="font-size:11px; color:var(--text-muted); margin-bottom:4px;">Gender</div>
+            <div id="mpGender" style="font-size:14px; color:var(--text-primary);"></div>
+          </div>
+          <div style="background:var(--bg-secondary); padding:12px; border-radius:8px;">
+            <div style="font-size:11px; color:var(--text-muted); margin-bottom:4px;">Mobile Number</div>
+            <div id="mpMobile" style="font-size:14px; color:var(--text-primary);"></div>
+          </div>
+          <div style="background:var(--bg-secondary); padding:12px; border-radius:8px;">
+            <div style="font-size:11px; color:var(--text-muted); margin-bottom:4px;">Account Status</div>
+            <div id="mpStatus" style="font-size:14px; color:var(--teal);"></div>
+          </div>
+        </div>
+        
+        <div style="background:var(--bg-secondary); padding:12px; border-radius:8px;">
+          <div style="font-size:11px; color:var(--text-muted); margin-bottom:4px;">Address</div>
+          <div id="mpAddress" style="font-size:14px; color:var(--text-primary); line-height:1.5;"></div>
+        </div>
+        
+      </div>
+      
+      <div style="margin-top: 24px; text-align: right;">
+        <button class="btn-primary" onclick="closeMyProfileModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ====== EDIT PROFILE MODAL ====== -->
+  <div class="modal hidden" id="modalEditProfile">
+    <div class="modal-content" style="max-width: 400px; padding: 24px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 24px;">
+        <h3 style="margin:0; font-size:18px; color:var(--text-primary); display:flex; align-items:center; gap:8px;">
+          <span>✏️</span> Edit Profile
+        </h3>
+        <button class="btn-icon" onclick="closeEditProfileModal()">✕</button>
+      </div>
+      
+      <div id="epContainer">
+        <p style="font-size:14px; color:var(--text-secondary); margin-bottom: 16px;">
+          For security reasons, you may only change your assigned password <strong>one time</strong>. Make sure you remember it!
+        </p>
+        
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label style="display:block; margin-bottom:6px; font-size:12px; color:var(--text-secondary);">Old Password</label>
+          <input type="password" id="epOldPassword" placeholder="Enter current password" style="width:100%; padding:10px; background:var(--bg-secondary); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text-primary);" />
+        </div>
+
+        <div class="form-group" style="margin-bottom: 24px;">
+          <label style="display:block; margin-bottom:6px; font-size:12px; color:var(--text-secondary);">New Password</label>
+          <input type="password" id="epNewPassword" placeholder="Enter new password" style="width:100%; padding:10px; background:var(--bg-secondary); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text-primary);" />
+        </div>
+        
+        <div style="display:flex; justify-content:flex-end; gap: 12px;">
+          <button class="btn-ghost" onclick="closeEditProfileModal()">Cancel</button>
+          <button class="btn-primary" onclick="submitPasswordChange()">Change Password</button>
+        </div>
+      </div>
+
+      <div id="epLockedContainer" class="hidden">
+        <div style="padding: 16px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 8px; color: #ef4444; font-size: 14px; text-align: center;">
+          🔒 You have already changed your password. For further changes, please contact the Platform Admin.
+        </div>
+        <div style="margin-top: 24px; text-align: right;">
+          <button class="btn-ghost" onclick="closeEditProfileModal()">Close</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>

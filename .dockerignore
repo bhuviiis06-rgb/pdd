@@ -1,0 +1,8 @@
+node_modules/
+android/
+.idea/
+.git/
+__pycache__/
+*.apk
+*.aab
+.env

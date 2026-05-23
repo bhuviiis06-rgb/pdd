@@ -1,0 +1,6 @@
+{
+  "appId": "com.dmft.analysis",
+  "appName": "DMFT Analysis",
+  "webDir": "www",
+  "bundledWebRuntime": false
+}
